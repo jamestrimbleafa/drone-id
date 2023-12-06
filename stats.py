@@ -14,6 +14,7 @@ import busio
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
 
+from dataclasses import dataclass
 
 # Create the I2C interface.
 i2c = busio.I2C(SCL, SDA)
@@ -56,10 +57,65 @@ font = ImageFont.load_default()
 # Some other nice fonts to try: http://www.dafont.com/bitmap.php
 # font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 9)
 
+#from socket import *
+#import struct
+#PORT = 14551
+#mavsocket = socket(AF_INET, SOCK_DGRAM)
+#mavsocket.bind(("127.0.0.1", PORT))
+#mavsocket.setblocking(False)
+
+#@dataclass
+#class MavPacket:
+#    stx: int
+#    length: int
+#    seq: int
+#    sys_id: int
+#    comp_id: int
+#    msg_id: int
+#    payload: bytes
+#    crc: int
+#    
+#    @classmethod
+#    def parse(cls, data: bytes):
+#        stx, length, seq, sys_id, comp_id, msg_id = struct.unpack("@BBBBBB", data[:6])
+#        payload = data[6:length+6]
+#        crc=struct.unpack("@H", data[length+6:length+8])[0]
+#        return cls(stx, length, seq, sys_id, comp_id, msg_id, payload, crc)
+ 
+
+from pymavlink import mavutil
+conn = mavutil.mavlink_connection('udpin:localhost:14551')
+
+
 while True:
+    if False:
+        try:
+            data, addr = mavsocket.recvfrom(1024)
+        except:
+            pass
+        else:
+            packet = MavPacket.parse(data)
+            if packet.msg_id != 1:
+                print(packet)
+            if packet.msg_id == 253 or b"PreArm" in packet.payload:
+                print(f"LOG: {packet.payload.decode()}")
+                draw.rectangle((0, 0, width, height), outline=0, fill=0)
+        
+    resp = conn.recv_match(blocking=False)
+    
+    print(resp)
+        
+    if False:
+        tlen = 20
+        s = packet.payload.decode()
+        draw.text((x, top + 0), s[:min(tlen,len(s))], font=font, fill=255)
+        draw.text((x, top + 8), s[min(tlen,len(s)-1):min(2*tlen,len(s))], font=font, fill=255)
+        draw.text((x, top + 16), s[min(2*tlen,len(s)-1):min(3*tlen,len(s))], font=font, fill=255)
+        draw.text((x, top + 25), s[min(3*tlen,len(s)-1):], font=font, fill=255)
+        disp.image(image)
+        disp.show()
 
     # Draw a black filled box to clear the image.
-    draw.rectangle((0, 0, width, height), outline=0, fill=0)
 
     # Shell scripts for system monitoring from here:
     # https://unix.stackexchange.com/questions/119126/command-to-display-memory-usage-disk-usage-and-cpu-load
@@ -76,12 +132,10 @@ while True:
 
     # Write four lines of text.
 
-    draw.text((x, top + 0), "IP: " + IP, font=font, fill=255)
-    draw.text((x, top + 8), "CPU load: " + CPU, font=font, fill=255)
-    draw.text((x, top + 16), MemUsage, font=font, fill=255)
-    draw.text((x, top + 25), "Drone ID: " + DroneID, font=font, fill=255)
+    #draw.text((x, top + 0), "IP: " + IP, font=font, fill=255)
+    #draw.text((x, top + 8), "CPU load: " + CPU, font=font, fill=255)
+    #draw.text((x, top + 16), MemUsage, font=font, fill=255)
+    #draw.text((x, top + 25), "Drone ID: " + DroneID, font=font, fill=255)
 
     # Display image.
-    disp.image(image)
-    disp.show()
-    time.sleep(0.1)
+    #time.sleep(0.1)
