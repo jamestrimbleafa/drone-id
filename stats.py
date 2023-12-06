@@ -71,7 +71,7 @@ while True:
     MemUsage = subprocess.check_output(cmd, shell=True).decode("utf-8")
     cmd = 'df -h | awk \'$NF=="/"{printf "Disk: %d/%d GB  %s", $3,$2,$5}\''
     Disk = subprocess.check_output(cmd, shell=True).decode("utf-8")
-    cmd = "drone-id --value"
+    cmd = "./drone-id --value"
     DroneID = subprocess.check_output(cmd, shell=True).decode("utf-8")
 
     # Write four lines of text.
