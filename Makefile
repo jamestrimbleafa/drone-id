@@ -5,3 +5,6 @@ drone-id:
 clean:
 	@echo "Removing drone-id"
 	rm -f ./drone-id
+
+configure:
+	sudo apt install gpiod libgpiod-dev
