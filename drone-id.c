@@ -34,7 +34,7 @@ main(int argc, char *argv[])
   memset(&config, 0, sizeof(config));
   config.consumer = "drone-id";
   config.request_type = GPIOD_LINE_REQUEST_DIRECTION_INPUT;
-  config.flags = 0;
+  config.flags = GPIOD_LINE_REQUEST_FLAG_BIAS_PULL_DOWN;
 
   err = gpiod_line_request_bulk(&lines, &config, values);
   if(err)
