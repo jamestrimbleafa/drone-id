@@ -11,3 +11,5 @@ configure:
 	sudo apt install gpiod libgpiod-dev
 	@echo "Installing python gpio zero package"
 	pip install gpiozero
+	@echo "Installing OLED library"
+	pip install adafruit-circuitpython-ssd1306
